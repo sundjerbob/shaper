@@ -4,7 +4,6 @@
 #include <time.h>
 
 
-
 static Shape* create_empty_shape(DataType data_type)
 {
     Shape* new_shape = (Shape*)malloc(sizeof(Shape));
@@ -38,18 +37,16 @@ static Shape* shape_dimensions(Shape* shape, int nb_of_dimensions, int* dimensio
 
 
 
-
 static int shape_total_length(Shape* shape)
 {
     int nb_of_values = 1;
+
     for (int i = 0; i < shape->nb_of_dimensions; i++)
     {
         nb_of_values *= shape->dimensions[i];
     }
     return nb_of_values;
 }
-
-
 
 
     
@@ -62,11 +59,37 @@ static Shape* shape_values_to_zero(Shape* shape) {
         )
         return NULL;
 
-    shape->values = calloc(shape->nb_of_values, SHAPER_TYPE_SIZES[shape->data_type]);
+    shape->values = calloc(shape->nb_of_values, shaper_type_readers[shape->data_type]);
     return shape;
 }
 
 
+static Shape* shape_values_to_val(Shape* shape, void* ptr)
+{
+    if (shape->data_type == NULL)
+        return NULL;
+
+
+    int shape_values_nb = shape_total_length(shape);
+
+
+    DataNode* data_node = shaper_type_readers[shape->data_type](ptr);
+
+    if (shape->data_type == INT_TYPE)
+    {
+
+    }
+    else if (shape->data_type == FLOAT_TYPE)
+    {
+
+    }
+    else if (shape->data_type == DOUBLE_TYPE)
+    {
+
+    }
+    else
+        return NULL;
+}
 
 
 static void free_shape(Shape* shape)
@@ -79,11 +102,6 @@ static void free_shape(Shape* shape)
 
     free(shape);
 }
-
-static  
-
-
-
 
 
 
@@ -98,9 +116,19 @@ static Shape* shape(int nb_of_dimensions, int* dimensions, void* values, DataTyp
         shaper_free_shape(shape);
         return;
     }
+    
+    size_t memory_size = (size_t)(shape->nb_of_values * shaper_type_sizes[shape->data_type]);
 
-    return shape;
+    shape->values = malloc(memory_size);
+
+    
+
+
+    return shape;   
 }
+
+
+
 
 
 

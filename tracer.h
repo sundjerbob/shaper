@@ -1,5 +1,5 @@
-#ifndef SHAPER_DEBUG_H
-#define SHAPER_DEBUG_H
+#ifndef TRACER_H
+#define TRACER_H
 
 #define MAX_ERROR_CODES 10
 
@@ -45,4 +45,4 @@ void shaper_tracer_print(ShaperTracer* tracer);
 
 void shaper_tracer_clear(ShaperTracer* tracer);
 
-#endif /* SHAPER_DEBUG_H */
+#endif /* TRACER_H */

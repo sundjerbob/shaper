@@ -1,6 +1,7 @@
 #ifndef SHAPER_H
 #define SHAPER_H
-#include "data_types.h"
+
+#include "data_structs.h"
 
 
 typedef struct Shape {
@@ -13,10 +14,10 @@ typedef struct Shape {
 
 
 
-Shape* shape(int nb_of_dimensions, int* dimensions, void* vales, DataType data_type);
-Shape* shape_zeros(int dimensions, int* sizes, DataType data_type);
-Shape* shape_value(int dimensions, int* sizes, void* valuePtr, DataType data_type);
-Shape* shape_ones(int dimensions, int* sizes, DataType data_type);
+Shape* shape(int, int*, void*, DataType);
+Shape* shape_zeros(int, int*, DataType );
+Shape* shape_value(int, int*, void*, DataType);
+Shape* shape_ones(int ,int*, DataType);
 
 
 void free_shape(Shape* shape);

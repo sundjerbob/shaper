@@ -21,7 +21,7 @@
     <ClInclude Include="tracer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="data_types.h">
+    <ClInclude Include="data_structs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClCompile Include="tracer.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="data_types.c">
+    <ClCompile Include="data_structs.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
