@@ -55,44 +55,34 @@ static DataNode* read_double_value(void* ptr) {
     return node;
 }
 
-static void* populate_int_values(void* memory_start, int nb_of_values, DataNode* value) 
+static void *populate_int_values(void* mem_start, long length, DataNode value)
 {
-    int populate_val = value->int_val;
-
-    int* int_ptr = (int*)memory_start;
     
-    for (int i = 0; i < nb_of_values; i++, int_ptr++)
+    for (long i = 0; i < nb_of_values; i++)
     {
-        *int_ptr = populate_val;
+        ((*int)memory_start)[i] = value->int_val;
     }
 
     return memory_start;
 }
 
-static void* populate_float_values(void* memory_start, int nb_of_values, DataNode* value)
+static void* populate_float_values(void* mem_start, long length, DataNode value)
 {
-    float populate_val = value->float_val;
 
-    float* float_ptr = (float*)memory_start;
-
-    for (int i = 0; i < nb_of_values; i++, *float_ptr++)
+    for (long i = 0; i < nb_of_values; i++)
     {
-        *float_ptr = populate_val;
+        ((*float)memory_start)[i] = value->float_val;
     }
 
     return memory_start;
 }
 
 
-static void* populate_double_values(void* memory_start, int nb_of_values, DataNode* value)
+static void* populate_double_values(void* mem_start, long length, DataNode value)
 {
-    double populate_val = value->double_val;
-
-    double* double_ptr = (double*)memory_start;
-
-    for (int i = 0; i < nb_of_values; i++, double_ptr++)
+    for (long i = 0; i < nb_of_values; i++)
     {
-        *double_ptr = populate_val;
+        ((*double)memory_start)[i] = value->double_val;
     }
 
     return memory_start;

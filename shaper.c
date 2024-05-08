@@ -4,317 +4,86 @@
 #include <time.h>
 
 
-static Shape* create_empty_shape(DataType data_type)
+/* Allocate memory for shape. */ 
+static Shape* allocate_shape(int dimensions_nb, long* dimensions, DataType data_type)
 {
+    if (dimensions < 1) return NULL;
+
     Shape* new_shape = (Shape*)malloc(sizeof(Shape));
     
-    if (new_shape == NULL)
-        return NULL;
+    if (new_shape == NULL) return NULL;
 
+    shape->dimensions = malloc(shape->dimensions);
+    
+    if (shape->dimensions == NULL) 
+    {
+        free_shape(shape);
+        return NULL;
+    }
+
+    memcpy(shape->dimensions, dimensions, dimensions_nb * sizeof(long));
     new_shape->data_type = data_type;
-    new_shape->nb_of_dimensions = 0;
-    new_shape->nb_of_values = 0;
+    new_shape->length = 1;
+
+    for (int i = 0; i < dimensions_nb; i++)
+    {
+        new_shape->length *= dimensions[i];
+    }
 
     return new_shape;
 }   
 
 
-
-static Shape* shape_dimensions(Shape* shape, int nb_of_dimensions, int* dimensions)
-{
-    if (shape == NULL)
-        return NULL;
-
-    shape->dimensions = malloc(nb_of_dimensions * sizeof(int));
-
-    if (shape->dimensions == NULL)
-        return NULL;
-
-    memcpy(shape->dimensions, dimensions, nb_of_dimensions * sizeof(int));
-
-    return shape;
-}
-
-
-
-static int shape_total_length(Shape* shape)
-{
-    int nb_of_values = 1;
-
-    for (int i = 0; i < shape->nb_of_dimensions; i++)
-    {
-        nb_of_values *= shape->dimensions[i];
-    }
-    return nb_of_values;
-}
-
-
-    
-static Shape* shape_values_to_zero(Shape* shape) {
-    
-    if (
-        shape == NULL || 
-        shape->nb_of_dimensions < 1 ||
-        shape->dimensions == NULL
-        )
-        return NULL;
-
-    shape->values = calloc(shape->nb_of_values, shaper_type_readers[shape->data_type]);
-    return shape;
-}
-
-
-static Shape* shape_values_to_val(Shape* shape, void* ptr)
-{
-    if (shape->data_type == NULL)
-        return NULL;
-
-
-    int shape_values_nb = shape_total_length(shape);
-
-
-    DataNode* data_node = shaper_type_readers[shape->data_type](ptr);
-
-    if (shape->data_type == INT_TYPE)
-    {
-
-    }
-    else if (shape->data_type == FLOAT_TYPE)
-    {
-
-    }
-    else if (shape->data_type == DOUBLE_TYPE)
-    {
-
-    }
-    else
-        return NULL;
-}
-
-
+/* release occupied memory */
 static void free_shape(Shape* shape)
 {
     if (shape == NULL) return;
 
     if (shape->dimensions != NULL) free(shape->dimensions);
 
-    if (shape->values != NULL) free(shape->values);
+    if (shape->data != NULL) free(shape->data);
 
     free(shape);
 }
 
 
 
-static Shape* shape(int nb_of_dimensions, int* dimensions, void* values, DataType data_type) {
-   
-    Shape* shape = create_empty_shape(data_type);
-    
+static Shape* shape(int dimensions_nb, long* dimensions, void* data, DataType data_type) {
+
+    Shape* shape = allocate_shape(dimensions_nb, dimensions, data_type);
     if (shape == NULL) return NULL;
+    
+    size_t data_size = SUPPORTED_DATA_TYPES[shape->data_type] * (size_t)shape->length;
+    shape->data = malloc(data_size);
 
-    if (shape_dimensions(shape, nb_of_dimensions, dimensions) == NULL)
+    if(shape->data == NULL) 
     {
-        shaper_free_shape(shape);
-        return;
+        free_shape(shape);
+        return NULL;
     }
-    
-    size_t memory_size = (size_t)(shape->nb_of_values * shaper_type_sizes[shape->data_type]);
-
-    shape->values = malloc(memory_size);
-
-    
-
-
-    return shape;   
-}
-
-
-
-
-
-
-
-
-
-Shape* shape_rand(int dimensions, int* sizes, DataType data_type) {
-
-    int total_elements = 1;
-    for (int i = 0; i < dimensions; i++) {
-        total_elements *= sizes[i];
-    }
-
-    void* values;
-    switch (data_type) {
-    case INT_TYPE:
-        values = malloc(total_elements * sizeof(int));
-        if (values == NULL) {
-            return NULL; 
-        }
-
-        for (int i = 0; i < total_elements; i++) {
-            ((int*)values)[i] = rand(); 
-        }
-        break;
-    case FLOAT_TYPE:
-        values = malloc(total_elements * sizeof(float));
-        if (values == NULL) {
-            return NULL; 
-        }
-
-        for (int i = 0; i < total_elements; i++) {
-            ((float*)values)[i] = ((float)rand() / RAND_MAX) * 100.0f; 
-        }
-        break;
-    case DOUBLE_TYPE:
-        values = malloc(total_elements * sizeof(double));
-        
-        if (values == NULL) {
-            return NULL; 
-        }
-
-        for (int i = 0; i < total_elements; i++) {
-            ((double*)values)[i] = ((double)rand() / RAND_MAX) * 100.0; 
-        }
-
-        break;
-
-    default:
-
-        return NULL; 
-    }
-
-    return shape(dimensions, sizes, values, data_type);
-}
-
-Shape* shape_zeros(int dimensions, int* sizes, DataType data_type) {
-
-    int total_elements = 1;
-
-    for (int i = 0; i < dimensions; i++) {
-        total_elements *= sizes[i];
-    }
-
-    void* values;
-    
-    switch (data_type) {
-    
-        case INT_TYPE:
-            values = calloc(total_elements, sizeof(int));
-            break;
-
-        case FLOAT_TYPE:
-            values = calloc(total_elements, sizeof(float));
-            break;
-
-        case DOUBLE_TYPE:
-            values = calloc(total_elements, sizeof(double));
-            break;
-
-        default:
-            return NULL; 
-    }
-
-    return shape(dimensions, sizes, values, data_type);
-}
-
-
-
-Shape* shape_set_values(int dimensions, int* sizes, DataType data_type, void* valuePtr) {
-    
-    Shape* shape = shape(dimensions, sizes, NULL, data_type);
-    if (shape == NULL) {
-        return NULL; // Shape creation failed
-    }
-
-    // Calculate the total number of elements
-    int total_elements = 1;
-    for (int i = 0; i < dimensions; i++) {
-        total_elements *= sizes[i];
-    }
-
-    switch (data_type) {
-    case INT_TYPE:
-    case FLOAT_TYPE:
-    case DOUBLE_TYPE:
-        // Copy the specified value to all elements
-        for (int i = 0; i < total_elements; i++) {
-            switch (data_type) {
-            case INT_TYPE:
-                ((int*)shape->values)[i] = *((int*)valuePtr);
-                break;
-            case FLOAT_TYPE:
-                ((float*)shape->values)[i] = *((float*)valuePtr);
-                break;
-            case DOUBLE_TYPE:
-                ((double*)shape->values)[i] = *((double*)valuePtr);
-                break;
-            }
-        }
-        break;
-    default:
-        return NULL; // Unsupported data type
-    }
-
+       
+    memcpy(shape->data, data, data_size);
+     
     return shape;
 }
 
-Shape* shape_ones(int dimensions, int* sizes, DataType data_type) {
+static Shape *shape_values(int dimensions_nb, long* dimensions, void* value, DataType data_type)
+{
+    Shape* shape = allocate_shape(dimensions_nb, dimensions, data_type);
+    if (shape == NULL) return NULL;
 
-    int total_elements = 1;
-   
-    for (int i = 0; i < dimensions; i++) {
-        total_elements *= sizes[i];
-    }
+    DataNode data_val = shaper_type_readers[shape->data_type](value);
 
-    void* values;
-
-    switch (data_type) 
-    {
-        case INT_TYPE:
-        {
-            values = malloc(total_elements * sizeof(int));
-         
-            if (values == NULL) 
-            {
-                return NULL;
-            }
-
-            for (int i = 0; i < total_elements; i++) {
-                ((int*)values)[i] = 1;
-            }
-            break;
-        }
-        case FLOAT_TYPE:
-        {
-            values = malloc(total_elements * sizeof(float));
-            
-            if (values == NULL) {
-                return NULL;
-            }
-            for (int i = 0; i < total_elements; i++) {
-                ((float*)values)[i] = 1.0f;
-            }
-            break;
-        }
-
-        case DOUBLE_TYPE:
-        {
-            values = malloc(total_elements * sizeof(double));
-            if (values == NULL) 
-            {
-                return NULL; 
-            }
-            for (int i = 0; i < total_elements; i++) 
-            {
-                ((double*)values)[i] = 1.0;
-            }
-            break; 
-        }
-        
-        default:
-            return NULL; 
-    }
-
-     return shape(dimensions, sizes, values, data_type);
+    shaper_populete_values[shape->data_type](shape->data, shape->length, value);
+    
+    return shape;
 }
+
+
+
+
+
+
+
 
 

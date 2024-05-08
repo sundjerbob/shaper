@@ -5,19 +5,18 @@
 
 
 typedef struct Shape {
-    int nb_of_dimensions;
-    int* dimensions; 
-    void* values;
-    int nb_of_values;
+    int dimensions_nb;
+    long* dimensions; 
+    void* data;
+    long length;
     DataType data_type;
 } Shape;
 
 
 
-Shape* shape(int, int*, void*, DataType);
-Shape* shape_zeros(int, int*, DataType );
-Shape* shape_value(int, int*, void*, DataType);
-Shape* shape_ones(int ,int*, DataType);
+Shape* shape_zeros(int, long*, DataType );
+Shape* shape_values(int, long*, void*, DataType);
+Shape* shape_ones(int ,long*, DataType);
 
 
 void free_shape(Shape* shape);

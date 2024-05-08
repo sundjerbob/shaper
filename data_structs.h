@@ -36,12 +36,12 @@ DataNode* (*shaper_type_readers[SUPPORTED_DATA_TYPES])(void*) = {
 };
 
 
-static void* populate_int_values(void*, int, DataNode*);
-static void* populate_float_values(void*, int, DataNode*);
-static void* populate_double_values(void*, int, DataNode*);
+static void* populate_int_values(void* mem_start, long length, DataNode value);
+static void* populate_float_values(void* mem_start, long length, DataNode value);
+static void* populate_double_values(void* mem_start, long length, DataNode value);
 
 
-void* (*shaper_populete_values[SUPPORTED_DATA_TYPES])(void*, int, DataNode) = {
+void* (*shaper_populete_values[SUPPORTED_DATA_TYPES])(void* mem_start, long length, DataNode value) = {
     populate_int_values, 
     populate_float_values, 
     populate_double_values,
