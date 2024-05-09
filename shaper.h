@@ -5,20 +5,18 @@
 
 
 typedef struct Shape {
-    int dimensions_nb;
-    long* dimensions; 
+    unsigned int dimensions_nb;
+    unsigned long long* dimensions; /* 8bytes */
     void* data;
-    long length;
-    DataType data_type;
+    size_t length;
+    DataType data_type; /* max array length 8bytes */
 } Shape;
 
 
 
-Shape* shape_zeros(int, long*, DataType );
-Shape* shape_values(int, long*, void*, DataType);
-Shape* shape_ones(int ,long*, DataType);
-
-
+Shape *shape_zeros(unsigned int, unsigned long long*, DataType);
+Shape *shape_values(unsigned int, unsigned long long*, DataValue, DataType);
+Shape *shape_ones(unsigned int, unsigned long long*, DataType);
 void free_shape(Shape* shape);
 
 #endif /* SHAPER_H */

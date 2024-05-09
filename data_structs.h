@@ -1,19 +1,13 @@
 #ifndef DATA_STRUCTS_H
 #define DATA_STRUCTS_H
 
-#define SUPPORTED_DATA_TYPES 3 
+#define DATA_TYPES_NB 3 
 
-int shaper_type_sizes[SUPPORTED_DATA_TYPES] = { 
+int SHAPER_TYPES_SIZES[DATA_TYPES_NB] = {
     sizeof(int),
     sizeof(float),
     sizeof(double),
 };
-
-typedef union DataNode {
-    int int_val;
-    float float_val;
-    double double_val; 
-} DataNode;
 
 
 typedef enum DataType {
@@ -23,31 +17,23 @@ typedef enum DataType {
 } DataType;
 
 
-
-static DataNode* read_int_value(void*);
-static DataNode* read_float_value(void*);
-static DataNode* read_double_value(void*);
-
-
-DataNode* (*shaper_type_readers[SUPPORTED_DATA_TYPES])(void*) = {
-  read_int_value,
-  read_float_value,
-  read_double_value,
-};
+typedef union DataValue {
+    int int_val;
+    float float_val;
+    double double_val;
+} DataValue;
 
 
-static void* populate_int_values(void* mem_start, long length, DataNode value);
-static void* populate_float_values(void* mem_start, long length, DataNode value);
-static void* populate_double_values(void* mem_start, long length, DataNode value);
+static void* populate_int_values(void* mem_start, size_t length, DataValue value);
+static void* populate_float_values(void* mem_start, size_t length, DataValue value);
+static void* populate_double_values(void* mem_start, size_t length, DataValue value);
 
 
-void* (*shaper_populete_values[SUPPORTED_DATA_TYPES])(void* mem_start, long length, DataNode value) = {
+ void* (*populate_data_fn[DATA_TYPES_NB])(void* mem_start, size_t length, DataValue value) = {
     populate_int_values, 
     populate_float_values, 
     populate_double_values,
 };
-
-
 
 
 #endif /* DATA_STRUCTS_H */
